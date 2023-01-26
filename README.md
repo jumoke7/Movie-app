@@ -1,3 +1,6 @@
+poster= "http://img.omdbapi.com/?apikey=5a7c6087&"
+send data = "http://www.omdbapi.com/?apikey=5a7c6087&&"
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
