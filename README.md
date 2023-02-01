@@ -1,5 +1,9 @@
 poster= "http://img.omdbapi.com/?apikey=5a7c6087&"
 send data = "http://www.omdbapi.com/?apikey=5a7c6087&&"
+useEffect(() => {
+setTimeout(setLoaded, 800, true);
+// setLoaded(true);
+}, [movies]);
 
 # Getting Started with Create React App
 

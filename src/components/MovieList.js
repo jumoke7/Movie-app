@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
+import { Error } from "./Error";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Download from "./Download";
@@ -9,7 +10,7 @@ import Navbar from "react-bootstrap/Navbar";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Link } from "react-router-dom";
-import Spinner from "react-bootstrap/Spinner";
+import Spinner from "./Spinner";
 import Alert from "react-bootstrap/Alert";
 
 const MovieList = (props) => {
@@ -18,19 +19,32 @@ const MovieList = (props) => {
   const [downloads, setDownloads] = useState([]);
   const [alert, setAlert] = useState(false);
   const [spinner, setSpinner] = useState(false);
+  const [error, setError] = useState(false);
 
-  function searchMovies() {
+  async function searchMovies() {
     try {
       setSpinner(true);
-      console.log(spinner);
-      axios
-        .get("http://www.omdbapi.com/?s=" + search + "&apikey=5a7c6087")
-        .then((res) => setMovies(res.data.Search), setSpinner(false))
-        .catch((err) => console.log(err));
+      setError(true);
+      const result = await axios.get(
+        "http://www.omdbapi.com/?s=" + search + "&apikey=5a7c6087"
+      );
+      const response = result.data.Search;
+      const isTrue = result.data.Response;
+
+      setMovies(response);
+      setSpinner(false);
+
+      if (isTrue === "True") {
+        // setSpinner(false);
+      } else {
+        setError(true);
+      }
     } catch (error) {
-      console.log(error);
+      <Error />;
+      setError(true);
     }
   }
+
   function downloadMovie(movie) {
     setAlert(true);
     downloads.push(movie);
@@ -46,7 +60,6 @@ const MovieList = (props) => {
         <Container className="nav-bar">
           <Navbar.Brand style={{ color: "white" }}>
             <h1>Movie App</h1>
-
             {/* <BrowserRouter>
               <Routes>
                 <Route path="/download" element={<Download />} />
@@ -84,65 +97,67 @@ const MovieList = (props) => {
       </Link>
 
       <Row>
-        {/* {spinner && (
-          <div className="spinner">
-            {" "}
-            <Spinner variant="success" />
-          </div>
-        )} */}
-        {movies.map((movie, index) => (
-          <Col className="pt-2" key={index}>
-            <div className="border-success movie-box">
-              <img src={movie.Poster} className="movie-img" alt="movie"></img>{" "}
-              <div className="movie-info">
-                <h1
-                  style={{
-                    id: "text1",
-                    fontWeight: "800",
-                    color: "white",
-                    fontSize: "14px",
-                    marginTop: "10px",
-                  }}
-                >
-                  Title : {movie.Title}
-                </h1>
-                <h1
-                  style={{
-                    fontWeight: "800",
-                    id: "text1",
-                    color: "white",
-                    fontSize: "14px",
-                    marginTop: "10px",
-                  }}
-                >
-                  {" "}
-                  Year : {movie.Year}
-                </h1>
+        {movies.length > 0
+          ? movies.map((movie, index) => (
+              <Col className="pt-2" key={index}>
+                <div className="border-success movie-box">
+                  <img
+                    src={movie.Poster}
+                    className="movie-img"
+                    alt="movie"
+                  ></img>{" "}
+                  <div className="movie-info">
+                    <h1
+                      style={{
+                        id: "text1",
+                        fontWeight: "800",
+                        color: "white",
+                        fontSize: "14px",
+                        marginTop: "10px",
+                      }}
+                    >
+                      Title : {movie.Title}
+                    </h1>
+                    <h1
+                      style={{
+                        fontWeight: "800",
+                        id: "text1",
+                        color: "white",
+                        fontSize: "14px",
+                        marginTop: "10px",
+                      }}
+                    >
+                      {" "}
+                      Year : {movie.Year}
+                    </h1>
 
-                <h1
-                  style={{
-                    fontWeight: "800",
-                    id: "text1",
-                    color: "white",
-                    fontSize: "14px",
-                    marginTop: "10px",
-                  }}
-                >
-                  {" "}
-                  Type : {movie.Type}
-                </h1>
-                <div>
-                  <button
-                    onClick={() => downloadMovie(movie)}
-                    className="download-btn"
-                  >
-                    Download
-                  </button>
+                    <h1
+                      style={{
+                        fontWeight: "800",
+                        id: "text1",
+                        color: "white",
+                        fontSize: "14px",
+                        marginTop: "10px",
+                      }}
+                    >
+                      {" "}
+                      Type : {movie.Type}
+                    </h1>
+                    <div>
+                      {spinner && <Spinner>LOADING......</Spinner>}
+
+                      <button
+                        onClick={() => downloadMovie(movie)}
+                        className="download-btn"
+                      >
+                        Download
+                      </button>
+                    </div>
+                  </div>{" "}
                 </div>
-              </div>{" "}
-            </div>
-          </Col>
-        ))}
+              </Col>
+            ))
+          : null}
       </Row>
     </Container>
   );
