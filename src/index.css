@@ -30,7 +30,7 @@ code {
   height: fit-content;
   width: 280px;
   border-radius: 5px;
-  background-color: rgb(4, 126, 41);
+  border: 2px solid rgb(4, 126, 41);
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -82,4 +82,28 @@ code {
 .spinner {
   text-align: center;
   padding-top: 200px;
+}
+.error-message {
+  display: flex;
+  padding-top: 200px;
+  justify-content: center;
+  align-items: center;
+}
+.movie-logo {
+  width: 250px;
+}
+Link {
+  background-color: aquamarine;
+  width: 200px;
+}
+.download-header {
+  background-color: rgb(4, 126, 41);
+  height: 70px;
+  color: white;
+  font-weight: 600;
+  font-size: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
 }

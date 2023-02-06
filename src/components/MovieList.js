@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
+import Logo from "../assets/images/Logo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { Error } from "./Error";
@@ -20,28 +21,34 @@ const MovieList = (props) => {
   const [alert, setAlert] = useState(false);
   const [spinner, setSpinner] = useState(false);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function searchMovies() {
     try {
       setSpinner(true);
-      setError(true);
       const result = await axios.get(
         "http://www.omdbapi.com/?s=" + search + "&apikey=5a7c6087"
       );
       const response = result.data.Search;
       const isTrue = result.data.Response;
+      const isError = result.data.Error;
+
+      console.log(isError);
 
       setMovies(response);
       setSpinner(false);
 
       if (isTrue === "True") {
         // setSpinner(false);
-      } else {
+      }
+
+      if (isTrue === "False") {
         setError(true);
+        setErrorMessage(isError);
+        console.log("my error", error);
       }
     } catch (error) {
-      <Error />;
-      setError(true);
+      console.log("my error", error);
     }
   }
 
@@ -59,23 +66,25 @@ const MovieList = (props) => {
       <Navbar>
         <Container className="nav-bar">
           <Navbar.Brand style={{ color: "white" }}>
-            <h1>Movie App</h1>
+            {/* <img src={Logo} alt="Logo" className="movie-logo"></img> */}
+            <h1>My Movie App</h1>
             {/* <BrowserRouter>
               <Routes>
                 <Route path="/download" element={<Download />} />
               </Routes>
             </BrowserRouter> */}
           </Navbar.Brand>
-          {alert && (
-            <div className="Alert">
-              {["success"].map((variant) => (
-                <Alert key={variant} variant={variant}>
-                  <Alert.Link href="#">Downloaded</Alert.Link>
-                </Alert>
-              ))}
-            </div>
-          )}
+
           <Form className="d-flex">
+            {alert && (
+              <div className="Alert">
+                {["success"].map((variant) => (
+                  <Alert key={variant} variant={variant}>
+                    <Alert.Link href="#">Downloaded</Alert.Link>
+                  </Alert>
+                ))}
+              </div>
+            )}
             <Form.Control
               type="search"
               value={search}
@@ -92,72 +101,68 @@ const MovieList = (props) => {
           </Form>
         </Container>
       </Navbar>
-      <Link to="/download" element={<Download />}>
+      <Link to="/download" element={<Download />} className="download-link">
         Downloads
       </Link>
-
       <Row>
-        {movies.length > 0
-          ? movies.map((movie, index) => (
-              <Col className="pt-2" key={index}>
-                <div className="border-success movie-box">
-                  <img
-                    src={movie.Poster}
-                    className="movie-img"
-                    alt="movie"
-                  ></img>{" "}
-                  <div className="movie-info">
-                    <h1
-                      style={{
-                        id: "text1",
-                        fontWeight: "800",
-                        color: "white",
-                        fontSize: "14px",
-                        marginTop: "10px",
-                      }}
-                    >
-                      Title : {movie.Title}
-                    </h1>
-                    <h1
-                      style={{
-                        fontWeight: "800",
-                        id: "text1",
-                        color: "white",
-                        fontSize: "14px",
-                        marginTop: "10px",
-                      }}
-                    >
-                      {" "}
-                      Year : {movie.Year}
-                    </h1>
+        {movies?.map((movie, index) => (
+          <Col className="pt-2" key={index}>
+            <div className="border-success movie-box">
+              <img src={movie.Poster} className="movie-img" alt="movie"></img>{" "}
+              <div className="movie-info">
+                <h1
+                  style={{
+                    id: "text1",
+                    fontWeight: "800",
+                    color: "white",
+                    fontSize: "14px",
+                    marginTop: "10px",
+                  }}
+                >
+                  Title : {movie.Title}
+                </h1>
+                <h1
+                  style={{
+                    fontWeight: "800",
+                    id: "text1",
+                    color: "white",
+                    fontSize: "14px",
+                    marginTop: "10px",
+                  }}
+                >
+                  {" "}
+                  Year : {movie.Year}
+                </h1>
 
-                    <h1
-                      style={{
-                        fontWeight: "800",
-                        id: "text1",
-                        color: "white",
-                        fontSize: "14px",
-                        marginTop: "10px",
-                      }}
-                    >
-                      {" "}
-                      Type : {movie.Type}
-                    </h1>
-                    <div>
-                      {spinner && <Spinner>LOADING......</Spinner>}
+                <h1
+                  style={{
+                    fontWeight: "800",
+                    id: "text1",
+                    color: "white",
+                    fontSize: "14px",
+                    marginTop: "10px",
+                  }}
+                >
+                  {" "}
+                  Type : {movie.Type}
+                </h1>
+                <div>
+                  {spinner && <Spinner>LOADING......</Spinner>}
 
-                      <button
-                        onClick={() => downloadMovie(movie)}
-                        className="download-btn"
-                      >
-                        Download
-                      </button>
-                    </div>
-                  </div>{" "}
+                  <button
+                    onClick={() => downloadMovie(movie)}
+                    className="download-btn"
+                  >
+                    Download
+                  </button>
                 </div>
-              </Col>
-            ))
-          : null}
+              </div>{" "}
+            </div>
+          </Col>
+        ))}
+        <div className="error-message">
+          {error && <h1 style={{ color: "white" }}>{errorMessage}</h1>}
+        </div>
       </Row>
     </Container>
   );

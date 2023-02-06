@@ -18,7 +18,7 @@ export function Download() {
 
   return (
     <div>
-      This is the Download page
+      <div className="download-header">Downloads</div>
       <Row>
         {movies.map((movie, i) => (
           <Col className="pt-2" key={i}>

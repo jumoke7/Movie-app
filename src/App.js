@@ -13,7 +13,6 @@ const App = () => {
         <Route path="/" element={<MovieList />} />
         <Route path="/download" element={<Download />} />
         <Route path="*" element={<Error />} />
-
         <Route />
       </Routes>
     </div>
